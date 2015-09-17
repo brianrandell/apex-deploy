@@ -1,0 +1,124 @@
+{
+    "id": "F0F60A0E-ABEA-44C7-8AFF-C323520D417D",
+    "name": "ApexDeploy",
+    "friendlyName": "Apex Deploy",
+    "description": "Build and Deploy to Salesforce with Apache Ant",
+    "helpMarkDown": "[More Information](https://blog.brianrandell.com)",
+    "category": "Build",
+    "visibility": [
+                "Build",
+                "Release"
+                  ],
+    "author": "Brian A. Randell",
+    "version": {
+        "Major": 1,
+        "Minor": 0,
+        "Patch": 3
+    },
+    "demands" : [
+        "ant"
+    ],
+    "minimumAgentVersion": "1.83.0",
+    "groups": [
+        {
+            "name":"advanced",
+            "displayName":"Advanced",
+            "isExpanded":false
+        }
+    ],
+    "instanceNameFormat": "Ant $(options) $(antBuildFile)",
+    "inputs": [
+       {
+            "name": "ConnectedServiceName",
+            "type": "connectedService:Generic",
+            "label": "Salesforce",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Salesforce server connection"
+        }, 
+       { 
+            "name": "antBuildFile", 
+            "type": "filePath", 
+            "label": "Ant build file", 
+            "defaultValue": "", 
+            "required": true,
+            "helpMarkDown": "Relative path from the repository root to the `Ant build file`."
+        },
+        { 
+            "name": "options", 
+            "type": "string", 
+            "label": "Options", 
+            "defaultValue":"", 
+            "required":false 
+        },
+        { 
+            "name": "targets", 
+            "type": "string", 
+            "label": "Target(s)", 
+            "defaultValue":"", "required":false
+        }, 
+        {
+             "name":"javaHomeSelection",
+             "type":"radio",
+             "label":"Set JAVA_HOME by",
+             "required":true,
+             "groupName":"advanced",
+             "defaultValue":"JDKVersion",
+             "helpMarkDown": "Sets JAVA_HOME either by selecting a JDK version that will be discovered during builds or by manually entering a JDK path.",
+             "options": {
+                "JDKVersion":"JDK Version",
+                "Path":"Path"
+            }
+        },        
+        {
+            "name":"jdkVersion",
+            "type":"pickList",
+            "label":"JDK Version",
+            "required":false,
+            "groupName":"advanced",
+            "defaultValue":"default",
+            "helpMarkDown": "Will attempt to discover the path to the selected JDK version and set JAVA_HOME accordingly.",
+            "visibleRule":"javaHomeSelection = JDKVersion",
+            "options": {
+                "default":"default",
+                "1.8":"JDK 8",
+                "1.7":"JDK 7",
+                "1.6":"JDK 6"
+            }
+        },
+        {
+            "name":"jdkUserInputPath",
+            "type":"string",
+            "label":"JDK Path",
+            "required":true,
+            "groupName":"advanced",
+            "defaultValue":"",
+            "helpMarkDown": "Sets JAVA_HOME to the given path.",
+            "visibleRule":"javaHomeSelection = Path"
+        },
+        { 
+            "name": "jdkArchitecture", 
+            "type": "pickList", 
+            "label": "JDK Architecture", 
+            "defaultValue":"x86", 
+            "required":false,
+            "helpMarkDown": "Optionally supply the architecture (x86, x64) of JDK.",
+            "groupName":"advanced",
+            "options":{
+                "x86":"x86",
+                "x64":"x64"
+            }
+        }
+    ],
+    "execution": {
+        "Node": {
+            "target": "ApexDeploy.js",
+            "argumentFormat": ""
+        },
+        "PowerShell": {
+            "target": "$(currentDirectory)\\ApexDeploy.ps1",
+            "argumentFormat": "",
+            "workingDirectory": "$(currentDirectory)"
+        }
+    }
+}
